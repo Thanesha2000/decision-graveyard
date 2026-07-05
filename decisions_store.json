@@ -1,0 +1,107 @@
+[
+  {
+    "id": "1",
+    "title": "Killed mobile app project",
+    "outcome": "rejected",
+    "people": [
+      "CTO",
+      "Head of Product"
+    ],
+    "tags": [
+      "team",
+      "bandwidth"
+    ]
+  },
+  {
+    "id": "3",
+    "title": "Rejected pricing change to usage-based model",
+    "outcome": "rejected",
+    "people": [
+      "Head of Sales",
+      "CEO"
+    ],
+    "tags": [
+      "pricing",
+      "sales"
+    ]
+  },
+  {
+    "id": "4",
+    "title": "Pivoted from B2C to B2B focus",
+    "outcome": "pivoted",
+    "people": [
+      "CEO",
+      "Head of Growth"
+    ],
+    "tags": [
+      "market",
+      "strategy"
+    ]
+  },
+  {
+    "id": "5",
+    "title": "Approved migration to microservices",
+    "outcome": "approved",
+    "people": [
+      "VP Engineering",
+      "Principal Engineer"
+    ],
+    "tags": [
+      "technical",
+      "architecture"
+    ]
+  },
+  {
+    "id": "6",
+    "title": "Rejected outsourcing QA to third party",
+    "outcome": "rejected",
+    "people": [
+      "VP Engineering",
+      "Head of QA"
+    ],
+    "tags": [
+      "team",
+      "quality"
+    ]
+  },
+  {
+    "id": "7",
+    "title": "Killed the AI chatbot support feature",
+    "outcome": "rejected",
+    "people": [
+      "Head of Support",
+      "CTO"
+    ],
+    "tags": [
+      "market",
+      "technical"
+    ]
+  },
+  {
+    "id": "8",
+    "title": "Paused international expansion to EU",
+    "outcome": "paused",
+    "people": [
+      "CEO",
+      "CFO",
+      "Head of Legal"
+    ],
+    "tags": [
+      "budget",
+      "legal"
+    ]
+  },
+  {
+    "id": "9",
+    "title": "Rejected annual company offsite",
+    "outcome": "rejected",
+    "people": [
+      "CFO",
+      "Head of HR"
+    ],
+    "tags": [
+      "budget",
+      "culture"
+    ]
+  }
+]

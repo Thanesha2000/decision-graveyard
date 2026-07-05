@@ -1,0 +1,16 @@
+[
+  {
+    "kind": "graph_completion",
+    "search_type": "GRAPH_COMPLETION",
+    "text": "**Why the mobile\u2011app project was killed**\n\n- **No engineering bandwidth** \u2013 the organization could not support both the existing web product and a new mobile client at the same time.  \n- **Team already stretched** \u2013 engineers were fully occupied with the core\u2011platform rebuild, leaving no capacity for a parallel mobile effort.  \n\nThese constraints were recorded as the reasoning for the decision made on\u202f15\u202fMar\u202f2024 by the CTO and Head of Product.",
+    "score": null,
+    "dataset_id": "38ced816-a680-5bd5-b19d-d23de073e293",
+    "dataset_name": "decision_graveyard_v2",
+    "metadata": {},
+    "raw": {
+      "value": "**Why the mobile\u2011app project was killed**\n\n- **No engineering bandwidth** \u2013 the organization could not support both the existing web product and a new mobile client at the same time.  \n- **Team already stretched** \u2013 engineers were fully occupied with the core\u2011platform rebuild, leaving no capacity for a parallel mobile effort.  \n\nThese constraints were recorded as the reasoning for the decision made on\u202f15\u202fMar\u202f2024 by the CTO and Head of Product."
+    },
+    "structured": null,
+    "source": "graph"
+  }
+]
