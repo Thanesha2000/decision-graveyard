@@ -1,6 +1,8 @@
-﻿import { useEffect, useState, useRef } from "react";
+﻿import { useEffect, useState } from "react";
 import ForceGraph2D from "react-force-graph-2d";
 import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 const OUTCOME_COLORS = {
   rejected: "#ef4444",
@@ -21,7 +23,7 @@ function GraphView({ highlightedIds = [] }) {
   const fetchGraph = () => {
     setLoading(true);
     axios
-      .get("http://127.0.0.1:8000/graph")
+      .get(API_URL + "/graph")
       .then((res) => {
         const nodes = res.data.nodes.map((n) => ({
           id: n.id,
@@ -52,7 +54,7 @@ function GraphView({ highlightedIds = [] }) {
     setDetailLoading(true);
     setDetailText("");
     axios
-      .post("http://127.0.0.1:8000/query", { question: node.label })
+      .post(API_URL + "/query", { question: node.label })
       .then((res) => {
         setDetailText(res.data.answer);
         setDetailLoading(false);
@@ -66,7 +68,7 @@ function GraphView({ highlightedIds = [] }) {
   const handleArchive = () => {
     setArchiving(true);
     axios
-      .delete(`http://127.0.0.1:8000/decisions/${selectedNode.id}`)
+      .delete(API_URL + "/decisions/" + selectedNode.id)
       .then(() => {
         setSelectedNode(null);
         setArchiving(false);

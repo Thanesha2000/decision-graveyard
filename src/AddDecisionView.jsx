@@ -1,6 +1,8 @@
 ﻿import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
 const OUTCOMES = ["rejected", "paused", "pivoted", "approved"];
 
 function AddDecisionView() {
@@ -23,7 +25,6 @@ function AddDecisionView() {
     setForm({ ...form, [field]: e.target.value });
   };
 
-  // Debounced repeat-check: waits 800ms after typing stops before checking
   useEffect(() => {
     if (!form.reasoning.trim() || form.reasoning.trim().length < 15) {
       setRepeatWarning(null);
@@ -34,8 +35,8 @@ function AddDecisionView() {
 
     debounceTimer.current = setTimeout(() => {
       axios
-        .post("http://127.0.0.1:8000/alerts/repeat", {
-          description: `${form.title}. ${form.reasoning}`,
+        .post(API_URL + "/alerts/repeat", {
+          description: form.title + ". " + form.reasoning,
         })
         .then((res) => {
           if (res.data.warning) {
@@ -55,8 +56,8 @@ function AddDecisionView() {
     setSuccessMsg("");
     setErrorMsg("");
     try {
-      await axios.post("http://127.0.0.1:8000/ingest", form);
-      setSuccessMsg(`"${form.title}" added to the graveyard.`);
+      await axios.post(API_URL + "/ingest", form);
+      setSuccessMsg('"' + form.title + '" added to the graveyard.');
       setForm({
         title: "",
         outcome: "rejected",
