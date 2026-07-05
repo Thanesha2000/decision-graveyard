@@ -54,7 +54,12 @@ function GraphView({ highlightedIds = [] }) {
     setDetailLoading(true);
     setDetailText("");
     axios
-      .post(API_URL + "/query", { question: node.label })
+      .post(API_URL + "/query", {
+        question:
+          "What was the full reasoning behind this decision: " +
+          node.label +
+          "?",
+      })
       .then((res) => {
         setDetailText(res.data.answer);
         setDetailLoading(false);
