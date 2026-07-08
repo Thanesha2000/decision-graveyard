@@ -1,6 +1,8 @@
 ﻿import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
 const OUTCOMES = ["rejected", "paused", "pivoted", "approved"];
 
 function AddDecisionView() {
@@ -23,9 +25,12 @@ function AddDecisionView() {
     setForm({ ...form, [field]: e.target.value });
   };
 
-  // Debounced repeat-check: waits 800ms after typing stops before checking
   useEffect(() => {
-    if (!form.reasoning.trim() || form.reasoning.trim().length < 15) {
+    const titleReady = form.title.trim().length >= 10;
+    const reasoningReady = form.reasoning.trim().length >= 10;
+
+    // Need at least a meaningful title to check for duplicates
+    if (!titleReady) {
       setRepeatWarning(null);
       return;
     }
@@ -33,10 +38,12 @@ function AddDecisionView() {
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
 
     debounceTimer.current = setTimeout(() => {
+      const description = reasoningReady
+        ? form.title + ". " + form.reasoning
+        : form.title;
+
       axios
-        .post("http://127.0.0.1:8000/alerts/repeat", {
-          description: `${form.title}. ${form.reasoning}`,
-        })
+        .post(API_URL + "/alerts/repeat", { description })
         .then((res) => {
           if (res.data.warning) {
             setRepeatWarning(res.data.matched_context);
@@ -55,8 +62,8 @@ function AddDecisionView() {
     setSuccessMsg("");
     setErrorMsg("");
     try {
-      await axios.post("http://127.0.0.1:8000/ingest", form);
-      setSuccessMsg(`"${form.title}" added to the graveyard.`);
+      await axios.post(API_URL + "/ingest", form);
+      setSuccessMsg('"' + form.title + '" added to the graveyard.');
       setForm({
         title: "",
         outcome: "rejected",

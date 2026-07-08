@@ -1,18 +1,5 @@
 [
   {
-    "id": "1",
-    "title": "Killed mobile app project",
-    "outcome": "rejected",
-    "people": [
-      "CTO",
-      "Head of Product"
-    ],
-    "tags": [
-      "team",
-      "bandwidth"
-    ]
-  },
-  {
     "id": "3",
     "title": "Rejected pricing change to usage-based model",
     "outcome": "rejected",
@@ -62,19 +49,6 @@
     "tags": [
       "team",
       "quality"
-    ]
-  },
-  {
-    "id": "7",
-    "title": "Killed the AI chatbot support feature",
-    "outcome": "rejected",
-    "people": [
-      "Head of Support",
-      "CTO"
-    ],
-    "tags": [
-      "market",
-      "technical"
     ]
   },
   {

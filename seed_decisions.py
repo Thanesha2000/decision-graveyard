@@ -75,11 +75,7 @@ DECISIONS = [
 ]
 
 async def main():
-    client = await cognee.serve(
-        url=os.environ["COGNEE_SERVICE_URL"],
-        api_key=os.environ["COGNEE_API_KEY"],
-    )
-    print("✅ Connected to Cognee Cloud")
+    print("[OK] Initializing local Cognee")
 
     for d in DECISIONS:
         text = (
@@ -90,30 +86,28 @@ async def main():
             f"Reasoning: {d['reasoning']}\n"
             f"Tags: {d['tags']}"
         )
-        await client.remember(text, dataset_name=DATASET)
-        print(f"✅ Ingested: {d['title']}")
+        await cognee.remember(text, dataset_name=DATASET)
+        print(f"[OK] Ingested: {d['title']}")
 
     print("\n--- Running test queries ---\n")
 
-    q1 = await client.recall(
+    q1 = await cognee.recall(
         query_text="Why did we kill the mobile app project?",
         datasets=[DATASET],
     )
     print("Q1:", q1[0]["text"] if q1 else "No result")
 
-    q2 = await client.recall(
+    q2 = await cognee.recall(
         query_text="Who objected to the pricing change?",
         datasets=[DATASET],
     )
     print("\nQ2:", q2[0]["text"] if q2 else "No result")
 
-    q3 = await client.recall(
+    q3 = await cognee.recall(
         query_text="Have we tried anything like microservices migration before?",
         datasets=[DATASET],
     )
     print("\nQ3:", q3[0]["text"] if q3 else "No result")
-
-    await cognee.disconnect()
 
 if __name__ == "__main__":
     if os.name == 'nt':

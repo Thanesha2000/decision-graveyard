@@ -1,6 +1,8 @@
 ﻿import { useState } from "react";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
 function QueryView({ onAnswer }) {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
@@ -18,18 +20,13 @@ function QueryView({ onAnswer }) {
 
     try {
       if (applyTodayMode) {
-        const res = await axios.post(
-          "http://127.0.0.1:8000/query/apply-today",
-          {
-            question,
-            current_context: currentContext,
-          },
-        );
+        const res = await axios.post(API_URL + "/query/apply-today", {
+          question,
+          current_context: currentContext,
+        });
         setAnswer(res.data.verdict);
       } else {
-        const res = await axios.post("http://127.0.0.1:8000/query", {
-          question,
-        });
+        const res = await axios.post(API_URL + "/query", { question });
         setAnswer(res.data.answer);
         if (onAnswer) onAnswer(res.data.matched_node_ids || []);
       }

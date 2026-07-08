@@ -1,13 +1,20 @@
+import os
+import sys
+
+# Ensure the api/ directory is in path so local imports work
+sys.path.insert(0, os.path.dirname(__file__))
+
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from mangum import Mangum
+
+# Local module imports (copied alongside this file in api/)
 from cognee_client import remember_decision, recall_decisions, forget_dataset
 from llm_client import reason_about_relevance
-
-
 from graph_store import add_decision, get_graph_data, find_matching_node_ids, get_dashboard_stats, remove_decision
 
 app = FastAPI(title="Decision Graveyard API")
-from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
@@ -20,7 +27,7 @@ app.add_middleware(
 
 class DecisionIn(BaseModel):
     title: str
-    outcome: str          # rejected / paused / pivoted / approved
+    outcome: str
     date: str
     people: str
     reasoning: str
@@ -37,13 +44,14 @@ class CorrectionIn(BaseModel):
     correction_text: str
     generalization_question: str
 
+class RepeatCheckIn(BaseModel):
+    description: str
+
 
 # ---- Endpoints ----
 
-@app.post("/ingest")
+@app.post("/api/ingest")
 async def ingest_decision(decision: DecisionIn):
-    """Turns a structured decision into text and stores it via remember(),
-    and also saves a small local copy for the graph visualization."""
     text = (
         f"Decision: {decision.title}\n"
         f"Outcome: {decision.outcome}\n"
@@ -58,20 +66,17 @@ async def ingest_decision(decision: DecisionIn):
         raise HTTPException(status_code=502, detail=f"Cognee error: {e}")
 
     add_decision(decision.title, decision.outcome, decision.people, decision.tags)
-
     return {"status": "ingested", "title": decision.title, "cognee_result": result}
 
 
-@app.post("/query")
+@app.post("/api/query")
 async def query_decisions(query: QueryIn):
-    """Natural-language question against the decision graph."""
     try:
         results = await recall_decisions(query.question)
     except Exception as e:
         print(f"Fallback due to Cognee error: {e}")
-        # Graceful fallback for local development without LLM/cloud connectivity
         return {
-            "answer": f"This is the documented context/reasoning (Fallback - local database offline or unconfigured).",
+            "answer": "This is the documented context/reasoning (Fallback - local database offline or unconfigured).",
             "raw": [],
             "matched_node_ids": []
         }
@@ -81,11 +86,10 @@ async def query_decisions(query: QueryIn):
 
     answer_text = results[0]["text"]
     matched_ids = find_matching_node_ids(answer_text)
-
     return {"answer": answer_text, "raw": results, "matched_node_ids": matched_ids}
 
 
-@app.post("/query/apply-today")
+@app.post("/api/query/apply-today")
 async def apply_today(payload: ApplyTodayIn):
     try:
         historical = await recall_decisions(payload.question)
@@ -106,13 +110,10 @@ async def apply_today(payload: ApplyTodayIn):
     except Exception as e:
         verdict = f"Failed to reason securely: {e}"
 
-    return {
-        "verdict": verdict,
-        "historical_context": historical_text,
-    }
+    return {"verdict": verdict, "historical_context": historical_text}
 
 
-@app.post("/correct")
+@app.post("/api/correct")
 async def correct_decision(payload: CorrectionIn):
     return {
         "status": "correction applied (mocked locally)",
@@ -121,20 +122,13 @@ async def correct_decision(payload: CorrectionIn):
     }
 
 
-class RepeatCheckIn(BaseModel):
-    description: str
-
-@app.post("/alerts/repeat")
+@app.post("/api/alerts/repeat")
 async def check_repeat(payload: RepeatCheckIn):
-    """
-    Checks if a similar decision already exists in the graveyard by querying Cognee.
-    """
     search_question = f"Has a decision similar to this been made before: {payload.description}"
 
     try:
         results = await recall_decisions(search_question, top_k=1)
     except Exception as e:
-        # If Cognee is unavailable, fail gracefully — don't block submission
         return {"warning": False, "message": f"Could not check for duplicates: {e}"}
 
     if not results:
@@ -146,19 +140,34 @@ async def check_repeat(payload: RepeatCheckIn):
         "matched_context": results[0]["text"],
     }
 
-@app.get("/graph")
+
+@app.get("/api/graph")
 async def get_graph():
-    """Returns nodes and edges for the frontend's graph visualization."""
     return get_graph_data()
 
-@app.get("/dashboard/stats")
+
+@app.get("/api/dashboard/stats")
 async def dashboard_stats():
-    """Returns summary stats for the dashboard."""
     return get_dashboard_stats()
-@app.delete("/decisions/{decision_id}")
+
+
+@app.delete("/api/decisions/{decision_id}")
 async def archive_decision(decision_id: str):
     remove_decision(decision_id)
     return {"status": "archived", "id": decision_id}
-@app.get("/health")
+
+
+@app.get("/api/health")
 async def health():
     return {"status": "ok"}
+
+@app.get("/health")
+async def health_no_api():
+    return {"status": "ok_no_api"}
+
+@app.get("/")
+async def root():
+    return {"status": "ok_root"}
+
+# Vercel serverless handler
+handler = Mangum(app, lifespan="off")
