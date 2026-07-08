@@ -45,7 +45,7 @@ graph TD
 - **Tech Choice**: Groq's API utilizing the high-speed Llama-3 model.
 - **Workflow**: When users evaluate a new decision via the "Apply Today" feature, the system pulls historical decision context from Cognee (the "RAG" step) and injects it into Groq. The LLM determines if a historical failure reason applies to the modern context (e.g., "Yes, this pricing change failed originally due to team pushback, but our context states we now have 10x revenue—proceed").
 
-## 🚀 Key Takeaways for Technical Interviews
+Accomplishments:
 
 1. **Monorepo Complexity Managed**: Successfully isolated frontend Node dependencies and backend Python dependencies within a single deployable Vercel project by creatively avoiding Vercel's legacy `builds` override configurations and leaning on auto-detection architecture.
 2. **Serverless Size Constraints Conquered**: Actively identified architecture bottlenecks where the standard SDK was too heavy for micro-functions. Successfully refactored SDK utilization out in favor of direct REST API integration, cutting the serverless payload by over 80%.
